@@ -30,7 +30,7 @@ Simulaattori käynnistyy view-paketin Main-luokasta.
 - Mamadou Balde
 
 - [Sami Paananen](
-    https://users.metropolia.fi/~samipaan/CV/
+    https://samipaan.com/portfolio
 )
 - Vladimir Piniazhin
 
