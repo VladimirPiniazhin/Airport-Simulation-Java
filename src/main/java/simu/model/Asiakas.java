@@ -15,10 +15,6 @@ public class Asiakas {
 	 *
 	 * @see simu.model.TapahtumanTyyppi
 	 */
-	/** Asiakkaan tapahtumatyyppi
-	 *
-	 * @see simu.model.TapahtumanTyyppi
-	 */
 	private TapahtumanTyyppi tyyppi;
 	/** Asiakkaan saapumisaika
 	 *
@@ -55,29 +51,10 @@ public class Asiakas {
 	private boolean ulkomaanlento; // Uusi kentta, maarittaa onko asiakas ulkomaanlennon asiakas
 
 	/**
-	 *  Ehtineet asiakkaat
-	 * @see simu.model.Asiakas
-	 * */
-	public static int lennolleEhtineet = 0;
-	/**
-	 *  Kotimaan myohastyneet asiakkaat
-	 * @see simu.model.Asiakas
-	 * */
-	public static int T1myohastyneet = 0;
-	/**
-	 *  Ulkomaan myohastyneet asiakkaat
-	 * @see simu.model.Asiakas
-	 * */
-	public static int T2myohastyneet = 0;
-	/** Palvellut asiakkaat
-	 * @see simu.model.Asiakas
-	 * */
-	public static int i = 0;
-	/**
 	 *  Luotujen matkustajien maara
 	 * @see simu.model.Asiakas
 	 * */
-	public static int j = 0;
+	private static int j = 0;
 
 	/** Konstruktori
 	 *

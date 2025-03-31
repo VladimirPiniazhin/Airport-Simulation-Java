@@ -22,10 +22,11 @@ public class Palvelupiste {
 	private final Tapahtumalista tapahtumalista;
 	/** Tapahtuman tyyppi */
 	private final TapahtumanTyyppi skeduloitavanTapahtumanTyyppi;
+	private final SimulaatioStatistiikka statistiikka;
 
 	// Laskutoimituksien tarvitsemat muuttujat
 	/** Palvelupisteessa palvellut asiakkaat */
-	public static int palvellutAsiakkaatTotal = 0;
+	private int palvellutAsiakkaatTotal = 0;
 	/** Palvelupisteen koordinatit Canvas:lla*/
 	private final int x, y;
 	/** Palvelupisteen palveluaika Canvas:lla*/
@@ -54,7 +55,7 @@ public class Palvelupiste {
 
 	/** Palvelupisteen konstruktori */
 	public Palvelupiste(int x, int y, String nimi, int pisteidenMaara, ContinuousGenerator generator,
-			Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi) {
+			Tapahtumalista tapahtumalista, TapahtumanTyyppi tyyppi, SimulaatioStatistiikka statistiikka) {
 		this.x = x;
 		this.y = y;
 		this.nimi = nimi;
@@ -63,6 +64,7 @@ public class Palvelupiste {
 		this.generator = generator;
 		this.skeduloitavanTapahtumanTyyppi = tyyppi;
 		this.varattu = false;
+		this.statistiikka = statistiikka;
 	}
 
 	// Jonon getteri
@@ -216,9 +218,8 @@ public class Palvelupiste {
 					a.setPoistumisaika(Kello.getInstance().getAika());
 					kokonaisJonotusaika += Kello.getInstance().getAika() - a.getSaapumisaika();
 					iterator.remove();
-					Asiakas.T2myohastyneet++;
-					Asiakas.i++;
-
+					statistiikka.lisaaT2myohastynyt();
+					statistiikka.lisaaPalvellutAsiakkaat();
 				}
 			}
 		}
@@ -236,8 +237,8 @@ public class Palvelupiste {
 					a.setPoistumisaika(Kello.getInstance().getAika());
 					kokonaisJonotusaika += Kello.getInstance().getAika() - a.getSaapumisaika();
 					iterator.remove();
-					Asiakas.T1myohastyneet++;
-					Asiakas.i++;
+					statistiikka.lisaaT1myohastynyt();
+					statistiikka.lisaaPalvellutAsiakkaat();
 				}
 			}
 		}

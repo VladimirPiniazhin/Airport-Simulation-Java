@@ -9,6 +9,7 @@ import simu.framework.Saapumisprosessi;
 import simu.framework.Tapahtuma;
 import simu.view.Kontrolleri;
 import simu.entity.*;
+import simu.model.SimulaatioStatistiikka;
 
 /** Moottori-luokka, joka sisaltaa simulaation paalogiikan */
 public class OmaMoottori extends Moottori {
@@ -21,33 +22,35 @@ public class OmaMoottori extends Moottori {
 	private boolean kaikkiAsiakkaatValmiit = false; // Lisatty lippu seuraamaan, ovatko kaikki asiakkaat valmiita
 	/** Tulokset */
 	private Tulokset tulokset;
+	private SimulaatioStatistiikka statistiikka;
 
 	/** Konstruktori, joka luo uuden moottorin */
 	public OmaMoottori(Kontrolleri kontrolleri) {
 		super(kontrolleri);
+		statistiikka = new SimulaatioStatistiikka();
 
 		palvelupisteet = new Palvelupiste[5];
 
 		// Lahtoselvitys
 		palvelupisteet[0] = new Palvelupiste(700, 533, "LS", kontrolleri.getLahtoselvitysMaara(),
 				new Normal(kontrolleri.getLSpalveluNopeus(), kontrolleri.getLahtoselvitysVar()), tapahtumalista,
-				TapahtumanTyyppi.DEP1);
+				TapahtumanTyyppi.DEP1, statistiikka);
 		// Turvatarkastus
 		palvelupisteet[1] = new Palvelupiste(590, 360, "TT", kontrolleri.getTurvatarkastusMaara(),
 				new Normal(kontrolleri.getTTpalveluNopeus(), kontrolleri.getTurvatarkastusVar()), tapahtumalista,
-				TapahtumanTyyppi.DEP2);
+				TapahtumanTyyppi.DEP2, statistiikka);
 		// Passintarkistus
 		palvelupisteet[2] = new Palvelupiste(880, 195, "PT", kontrolleri.getPassintarkastusMaara(),
 				new Normal(kontrolleri.getPTpalveluNopeus(), kontrolleri.getPassintarkastusVar()), tapahtumalista,
-				TapahtumanTyyppi.DEP3);
+				TapahtumanTyyppi.DEP3, statistiikka);
 		// Lahtoportti kotimaanlennot
 		palvelupisteet[3] = new Palvelupiste(300, 45, "T1", 1,
 				new Normal(kontrolleri.getKotimaaKA(), kontrolleri.getKotimaaVar()), tapahtumalista,
-				TapahtumanTyyppi.DEP4);
+				TapahtumanTyyppi.DEP4, statistiikka);
 		// Lahtoportti ulkomaanlennot
 		palvelupisteet[4] = new Palvelupiste(830, 45, "T2", 1,
 				new Normal(kontrolleri.getUlkomaaKA(), kontrolleri.getUlkomaaVar()), tapahtumalista,
-				TapahtumanTyyppi.DEP5);
+				TapahtumanTyyppi.DEP5, statistiikka);
 		// Saapumisprosessi
 		saapumisprosessi = new Saapumisprosessi(tapahtumalista, TapahtumanTyyppi.ULKO, kontrolleri.getLentojenVali(),
 				kontrolleri.getLentojenVali2());
@@ -70,62 +73,53 @@ public class OmaMoottori extends Moottori {
 	@Override
 	protected void suoritaTapahtuma(Tapahtuma t) {
 		Asiakas a;
-		switch ((TapahtumanTyyppi) t.getTyyppi()) {
+		TapahtumanTyyppi tyyppi = (TapahtumanTyyppi) t.getTyyppi();
+		
+		switch (tyyppi) {
 			case ARR1:
-				a = new Asiakas(TapahtumanTyyppi.ARR1);
-				a.setUlkomaanlento();
-				palvelupisteet[0].lisaaJonoon(a);
-				break;
 			case ARR2:
-				a = new Asiakas(TapahtumanTyyppi.ARR2);
+				a = new Asiakas(tyyppi);
+				if (tyyppi == TapahtumanTyyppi.ARR1) {
+					a.setUlkomaanlento();
+				}
 				palvelupisteet[0].lisaaJonoon(a);
 				break;
+				
 			case DEP1:
 				a = (Asiakas) palvelupisteet[0].otaJonosta();
 				palvelupisteet[1].lisaaJonoon(a);
 				break;
+				
 			case DEP2:
 				a = (Asiakas) palvelupisteet[1].otaJonosta();
-				if (a.isUlkomaanlento()) {
-					palvelupisteet[2].lisaaJonoon(a);
-
-				} else {
-					palvelupisteet[3].lisaaJonoon(a);
-
-				}
+				palvelupisteet[a.isUlkomaanlento() ? 2 : 3].lisaaJonoon(a);
 				break;
+				
 			case DEP3:
 				a = (Asiakas) palvelupisteet[2].otaJonosta();
 				palvelupisteet[4].lisaaJonoon(a);
 				break;
+				
 			case DEP4:
-				a = (Asiakas) palvelupisteet[3].otaJonosta();
-				a.setPoistumisaika(Kello.getInstance().getAika());
-				a.raportti();
-				Asiakas.lennolleEhtineet++;
-				Asiakas.i++;
-				break;
 			case DEP5:
-				a = (Asiakas) palvelupisteet[4].otaJonosta();
+				a = (Asiakas) palvelupisteet[tyyppi == TapahtumanTyyppi.DEP4 ? 3 : 4].otaJonosta();
 				a.setPoistumisaika(Kello.getInstance().getAika());
 				a.raportti();
-				Asiakas.lennolleEhtineet++;
-				Asiakas.i++;
+				statistiikka.lisaaLennolleEhtinyt();
+				statistiikka.lisaaPalvellutAsiakkaat();
 				break;
+				
 			case ULKO:
-				// Poistetaan jonoista kaikki ulkomaanlentojen asiakkaat
 				for (Palvelupiste palvelupiste : palvelupisteet) {
 					palvelupiste.removeAsiakasARR1();
 				}
-				// Poistetaan tapahtumalistan "Ulkomaalentojen"-tapahtuma
 				tapahtumalista.removeUlkomaanTapahtumat();
 				break;
+				
 			case SISA:
-				// Poistetaan jonoista kaikki kotimaanlentojen asiakkaat
 				for (Palvelupiste palvelupiste : palvelupisteet) {
 					palvelupiste.removeAsiakasARR2();
 				}
-				// Poistetaan tapahtumalistan "Sisalentojen"-tapahtuma
 				tapahtumalista.removeKotimaanTapahtumat();
 				break;
 		}
@@ -186,40 +180,44 @@ public class OmaMoottori extends Moottori {
 	 * {@inheritDoc}*/
 	@Override
 	public void asetaTulokset() {
-		LSTulos lsTulos = null;
-		TTTulos ttTulos = null;
-		PTTulos ptTulos = null;
-		T1Tulos t1Tulos = null;
-		T2Tulos t2Tulos = null;
 		Tulokset simunTulokset = null;
+		Object[] tulokset = new Object[5];
 
 		for (Palvelupiste p : palvelupisteet) {
-
-			if (p.getNimi().equals("LS")) {
-				p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
-				lsTulos = new LSTulos(p.getKayttoaste(), p.getSuoritusteho(), p.getJonotusaika(), p.getJononPituus(),
-						p.getMaara());
-			} else if (p.getNimi().equals("PT")) {
-				p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
-				ptTulos = new PTTulos(p.getKayttoaste(), p.getSuoritusteho(), p.getJonotusaika(), p.getJononPituus(),
-						p.getMaara());
-			} else if (p.getNimi().equals("TT")) {
-				p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
-				ttTulos = new TTTulos(p.getKayttoaste(), p.getSuoritusteho(), p.getJonotusaika(), p.getJononPituus(),
-						p.getMaara());
-			} else if (p.getNimi().equals("T1")) {
-				p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
-				t1Tulos = new T1Tulos(p.getKayttoaste(), p.getSuoritusteho(), p.getJonotusaika(), p.getJononPituus());
-			} else if (p.getNimi().equals("T2")) {
-				p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
-				t2Tulos = new T2Tulos(p.getKayttoaste(), p.getSuoritusteho(), p.getJonotusaika(), p.getJononPituus());
+			p.asetaPalvelupisteenTulokset(p, getSimulointiaika());
+			
+			switch (p.getNimi()) {
+				case "LS":
+					tulokset[0] = new LSTulos(p.getKayttoaste(), p.getSuoritusteho(), 
+						p.getJonotusaika(), p.getJononPituus(), p.getMaara());
+					break;
+				case "PT":
+					tulokset[1] = new PTTulos(p.getKayttoaste(), p.getSuoritusteho(), 
+						p.getJonotusaika(), p.getJononPituus(), p.getMaara());
+					break;
+				case "TT":
+					tulokset[2] = new TTTulos(p.getKayttoaste(), p.getSuoritusteho(), 
+						p.getJonotusaika(), p.getJononPituus(), p.getMaara());
+					break;
+				case "T1":
+					tulokset[3] = new T1Tulos(p.getKayttoaste(), p.getSuoritusteho(), 
+						p.getJonotusaika(), p.getJononPituus());
+					break;
+				case "T2":
+					tulokset[4] = new T2Tulos(p.getKayttoaste(), p.getSuoritusteho(), 
+						p.getJonotusaika(), p.getJononPituus());
+					break;
 			}
 
 			simunTulokset = new Tulokset(LocalDate.now(), getSimulointiaika(),
-					Asiakas.i, Asiakas.lennolleEhtineet, Asiakas.T1myohastyneet + Asiakas.T2myohastyneet,
-					Asiakas.T1myohastyneet,
-					Asiakas.T2myohastyneet, lsTulos, ttTulos, ptTulos, t1Tulos, t2Tulos);
-
+				statistiikka.getPalvellutAsiakkaat(), 
+				statistiikka.getLennolleEhtineet(), 
+				statistiikka.getYhteensaMyohastyneet(),
+				statistiikka.getT1myohastyneet(), 
+				statistiikka.getT2myohastyneet(),
+				(LSTulos)tulokset[0], (TTTulos)tulokset[1], 
+				(PTTulos)tulokset[2], (T1Tulos)tulokset[3], 
+				(T2Tulos)tulokset[4]);
 		}
 		this.tulokset = simunTulokset;
 	}
