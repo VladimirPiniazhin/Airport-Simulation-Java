@@ -830,8 +830,11 @@ public class Kontrolleri {
         PT.setText(String.format("%d kpl", ptTulos.getMaara()));
 
         // Myohastyneet prosentit
-        double myohastyneetT1Prosentti = tulokset.getMyohastyneet_t1() / (tulokset.getMyohastyneet_t1() + tulokset.getMyohastyneet_t2()) * 100;
-        double myohastyneetT2Prosentti = tulokset.getMyohastyneet_t2() / (tulokset.getMyohastyneet_t1() + tulokset.getMyohastyneet_t2()) * 100;
+        int totalMyohastyneet = tulokset.getMyohastyneet_t1() + tulokset.getMyohastyneet_t2();
+        double myohastyneetT1Prosentti = totalMyohastyneet > 0 ? 
+            (double)tulokset.getMyohastyneet_t1() / totalMyohastyneet * 100 : 0;
+        double myohastyneetT2Prosentti = totalMyohastyneet > 0 ? 
+            (double)tulokset.getMyohastyneet_t2() / totalMyohastyneet * 100 : 0;
     
         if (tulokset.getMyohastyneet_t1() > 0) {
             T1_myohastyneet_pros.setText(String.format("%.2f", myohastyneetT1Prosentti) + " %");

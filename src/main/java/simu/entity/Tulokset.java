@@ -46,27 +46,27 @@ public class Tulokset {
     /**
      * Tulokset-luokan asiakkaat
      */
-    private double asiakkaat;
+    private int asiakkaat;
     @Column(name = "lennolle_ehtineet")
     /**
      * Tulokset-luokan lennolle_ehtineet
      */
-    private double lennolle_ehtineet;
+    private int lennolle_ehtineet;
     @Column(name = "myohastyneet")
     /**
      * Tulokset-luokan lennolta_myohastyneet
      */
-    private double lennolta_myohastyneet;
+    private int lennolta_myohastyneet;
     @Column(name = "myohastyneet_t1")
     /**
      * Tulokset-luokan myohastyneet_t1
      */
-    private double myohastyneet_t1;
+    private int myohastyneet_t1;
     @Column(name = "myohastyneet_t2")
     /**
      * Tulokset-luokan myohastyneet_t2
      */
-    private double myohastyneet_t2;
+    private int myohastyneet_t2;
     @ManyToOne(cascade = CascadeType.PERSIST)
     /**
      * Tulokset-luokan lsTulos
@@ -108,7 +108,7 @@ public class Tulokset {
      * @param t1Tulos
      * @param t2Tulos
      */
-    public Tulokset(LocalDate paivamaara, double aika, double asiakkaat, double lennolle_ehtineet, double lennolta_myohastyneet, double myohastyneet_t1, double myohastyneet_t2, LSTulos lsTulos, TTTulos ttTulos, PTTulos ptTulos, T1Tulos t1Tulos, T2Tulos t2Tulos) {
+    public Tulokset(LocalDate paivamaara, double aika, int asiakkaat, int lennolle_ehtineet, int lennolta_myohastyneet, int myohastyneet_t1, int myohastyneet_t2, LSTulos lsTulos, TTTulos ttTulos, PTTulos ptTulos, T1Tulos t1Tulos, T2Tulos t2Tulos) {
         this.paivamaara = Date.valueOf(paivamaara);
         this.aika = aika;
         this.asiakkaat = asiakkaat;
@@ -155,31 +155,31 @@ public class Tulokset {
     /** Asetetaan asiakkaiden maara
      * @param asiakkaat
      */
-    public void setAsiakkaat(double asiakkaat) {
+    public void setAsiakkaat(int asiakkaat) {
         this.asiakkaat = asiakkaat;
     }
     /** Asetetaan lennolle ehtineet
      * @param lennolle_ehtineet
      */
-    public void setLennolle_ehtineet(double lennolle_ehtineet) {
+    public void setLennolle_ehtineet(int lennolle_ehtineet) {
         this.lennolle_ehtineet = lennolle_ehtineet;
     }
     /** Asetetaan lennolta myohastyneet
      * @param lennolta_myohastyneet
      */
-    public void setLennolta_myohastyneet(double lennolta_myohastyneet) {
+    public void setLennolta_myohastyneet(int lennolta_myohastyneet) {
         this.lennolta_myohastyneet = lennolta_myohastyneet;
     }
     /** Asetetaan T1 palvelupisteen myohastynee
      * @param myohastyneet_t1
      */
-    public void setMyohastyneet_t1(double myohastyneet_t1) {
+    public void setMyohastyneet_t1(int myohastyneet_t1) {
         this.myohastyneet_t1 = myohastyneet_t1;
     }
     /** Asetetaan T2 palvelupisteen myohastyneet
      * @param myohastyneet_t2
      */
-    public void setMyohastyneet_t2(double myohastyneet_t2) {
+    public void setMyohastyneet_t2(int myohastyneet_t2) {
         this.myohastyneet_t2 = myohastyneet_t2;
     }
     /** Asetetaan Lahtoselvitys palvelupisteen tulos
@@ -235,33 +235,33 @@ public class Tulokset {
         return aika;
     }
     /** Saadaan asiakkaiden maara
-     * @return double
+     * @return int
      */
-    public double getAsiakkaat() {
+    public int getAsiakkaat() {
         return asiakkaat;
     }
     /** Saadaan lennolle ehtineet
-     * @return double
+     * @return int
      */
-    public double getLennolle_ehtineet() {
+    public int getLennolle_ehtineet() {
         return lennolle_ehtineet;
     }
     /** Saadaan lennolta myohastyneet
-     * @return double
+     * @return int
      */
-    public double getLennolta_myohastyneet() {
+    public int getLennolta_myohastyneet() {
         return lennolta_myohastyneet;
     }
     /** Saadaan T1 palvelupisteen myohastynee
-     * @return double
+     * @return int
      */
-    public double getMyohastyneet_t1() {
+    public int getMyohastyneet_t1() {
         return myohastyneet_t1;
     }
     /** Saadaan T2 palvelupisteen myohastyneet
-     * @return double
+     * @return int
      */
-    public double getMyohastyneet_t2() {
+    public int getMyohastyneet_t2() {
         return myohastyneet_t2;
     }
     /** Saadaan Lahtoselvitys palvelupisteen tulos

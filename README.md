@@ -32,7 +32,9 @@ Simulaattori käynnistyy view-paketin Main-luokasta.
 - [Sami Paananen](
     https://samipaan.com/portfolio
 )
-- Vladimir Piniazhin
+- [Vladimir Piniazhin] (
+    https://www.linkedin.com/in/vladimir-piniazhin/
+)
 
 ## Kiitokset
 Simo Silander  
