@@ -29,12 +29,9 @@ Simulaattori käynnistyy view-paketin Main-luokasta.
 ## Ohjelmoijat
 - Mamadou Balde
 
-- [Sami Paananen](
-    https://samipaan.com/portfolio
-)
-- [Vladimir Piniazhin] (
-    https://www.linkedin.com/in/vladimir-piniazhin/
-)
+- [Sami Paananen](https://samipaan.com/portfolio)
+
+- [Vladimir Piniazhin](https://www.linkedin.com/in/vladimir-piniazhin/)
 
 ## Kiitokset
 Simo Silander  
